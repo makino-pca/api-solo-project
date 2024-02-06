@@ -2,7 +2,7 @@ const playerModel = require("./player.model");
 
 module.exports = {
   async getAll(req, res) {
-    const players = await playerModel.getAll();
+    const players = await playerModel.getAll(req.query.limit);
     res.json(players);
   },
 
