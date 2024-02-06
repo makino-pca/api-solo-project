@@ -4,20 +4,19 @@ const knex = require("knex")(config);
 const playerModel = require("../src/player/player.model");
 const PLAYER_TABLE = playerModel.PLAYER_TABLE;
 const testPlayer = {
-    id: 9999,
-    name: "Test Player",
-    number: 999,
-    high_school: "Test High School",
+  id: 1234,
+  name: "Test Player",
+  number: 123,
+  high_school: "Test High School",
 };
 
 describe("player", () => {
-
   before(async () => {
     await knex(PLAYER_TABLE)
       .insert(testPlayer)
       .returning("id")
-      .then((result) => {
-        console.log("inserted test customer");
+      .then(() => {
+        console.log("inserted test player");
       })
       .catch(console.error);
   });
@@ -27,13 +26,13 @@ describe("player", () => {
       .where("id", testPlayer.id)
       .returning("id")
       .del()
-      .then((result) => {
-        console.log("removed test customer");
+      .then(() => {
+        console.log("removed test player");
       })
       .catch(console.error);
   });
 
-  describe("setup", () => {
+  describe("DB setup", () => {
     it("should connect to database", () => {
       knex.raw("select 1 as result").catch(() => {
         assert.fail("unable to connect to database");
@@ -47,113 +46,123 @@ describe("player", () => {
     });
   });
 
-//   describe("getAll", () => {
-//     it("should return an array of customers", async () => {
-//       const customers = await customerModel.getAll();
-//       expect(customers).to.be.an.instanceof(Array);
-//     });
+  describe("DB getAll", () => {
+    it("should return an array of players", async () => {
+      const players = await playerModel.getAll();
+      expect(players).to.be.an.instanceof(Array);
+    });
 
-//     it("should accept a limit argument", async () => {
-//       const customers = await customerModel.getAll(3);
-//       expect(customers.length).to.be.at.most(3);
-//     });
-//   });
+    it("should accept a limit argument", async () => {
+      const players = await playerModel.getAll(2);
+      expect(players.length).to.be.at.most(2);
+    });
+  });
 
-//   describe("getById", () => {
-//     describe("when customer exists", () => {
-//       it("should get customer by id", async () => {
-//         const customer = await customerModel.getById(customerFixture.id);
-//         expect(customer).to.exist;
-//         expect(customer.id).to.eq(customerFixture.id);
-//       });
-//     });
+  describe("DB getById", () => {
+    describe("when player exists", () => {
+      it("should get player by id", async () => {
+        const player = await playerModel.getById(testPlayer.id);
+        expect(player).to.exist;
+        expect(player.id).to.eq(testPlayer.id);
+      });
+    });
 
-//     describe("when customer doesn't exist", () => {
-//       it("should return undefined", async () => {
-//         const customer = await customerModel.getById(45000);
-//         expect(customer).to.be.undefined;
-//       });
-//     });
-//   });
-//   describe("create", () => {
-//     const newId = 9999;
+    describe("when player doesn't exist", () => {
+      it("should return undefined", async () => {
+        const player = await playerModel.getById(45000);
+        expect(player).to.be.undefined;
+      });
+    });
+  });
 
-//     after(async () => {
-//       await knex
-//         .from(CUSTOMER_TABLE)
-//         .where("id", newId)
-//         .del()
-//         .catch(console.error);
+  describe("DB create", () => {
+    const newId = 9999;
 
-//       console.log("Deleted test product");
-//     });
+    after(async () => {
+      await knex
+        .from(PLAYER_TABLE)
+        .where("id", newId)
+        .del()
+        .catch(console.error);
 
-//     describe("with valid properties", () => {
-//       it("should be able to create a new customer", async () => {
-//         const newCustomer = {
-//           id: newId,
-//           email: "test@example.com",
-//           last_name: "Parker",
-//           postal_code: "55443",
-//         };
+      console.log("Deleted test player");
+    });
 
-//         const id = await customerModel.create(newCustomer);
-//         const customer = await knex(CUSTOMER_TABLE)
-//           .select()
-//           .where("id", newId)
-//           .first();
-//         expect(customer).to.exist;
-//         expect(customer.id).to.eq(newId);
-//       });
-//     });
+    describe("with valid properties", () => {
+      it("should be able to create a new player", async () => {
+        const newPlayer = {
+          id: newId,
+          name: "New Player",
+          number: 999,
+          high_school: "New High School",
+        };
 
-//     describe("with invalid parameters", () => {
-//       it("should throw an error", () => {
-//         assert.throws(() => {
-//           customerModel.create({
-//             bad_param: "HELLO!",
-//           });
-//         }, "Invalid field: bad_param");
-//       });
-//     });
-//   });
+        const id = await playerModel.create(newPlayer);
+        const player = await knex(PLAYER_TABLE)
+          .select()
+          .where("id", id)
+          .first();
+        expect(player).to.exist;
+        expect(player.id).to.eq(newId);
+      });
+    });
 
-//   describe("update", () => {
-//     describe("with valid parameters", () => {
-//       after(async () => {
-//         await knex(CUSTOMER_TABLE)
-//           .update({
-//             first_name: null,
-//           })
-//           .where("id", customerFixture.id)
-//           .returning("id")
-//           .then((result) => {
-//             console.log("updated test customer");
-//           })
-//           .catch(console.error);
-//       });
+    // describe("with invalid parameters", () => {
+    //     it("should throw an error", () => {
+    //         assert.throws(() => {
+    //             playerModel.create({
+    //                 bad_param: "HELLO!",
+    //             });
+    //         }, "Invalid field: bad_param");
+    //     });
+    // });
+  });
 
-//       it("should return the id", async () => {
-//         const id = await customerModel.update(customerFixture.id, {
-//           first_name: "Bill",
-//         });
-//         expect(id).to.eq(customerFixture.id);
-//       });
+  describe("DB update", () => {
+    describe("with valid parameters", () => {
+      after(async () => {
+        await knex(PLAYER_TABLE)
+          .update({
+            number: 321,
+          })
+          .where("id", testPlayer.id)
+          .returning("id")
+          .then(() => {
+            console.log("updated test player");
+          })
+          .catch(console.error);
+      });
 
-//       it("should update the customer", async () => {
-//         const customer = await customerModel.getById(customerFixture.id);
-//         expect(customer.firstName).to.eq("Bill");
-//       });
-//     });
+      it("should return the id", async () => {
+        const id = await playerModel.update(testPlayer.id, {
+          number: 321,
+        });
+        expect(id).to.eq(testPlayer.id);
+      });
 
-//     describe("when invalid parameters", () => {
-//       it("shouldn't update the customer", async () => {
-//         assert.throws(() => {
-//           customerModel.update(customerFixture.id, {
-//             favorite_food: "Pizza",
-//           });
-//         }, "Invalid field: favorite_food");
-//       });
-//     });
-//   });
+      it("should update the player", async () => {
+        const player = await playerModel.getById(testPlayer.id);
+        expect(player.name).to.eq("Test Player");
+      });
+    });
+
+    // describe("when invalid parameters", () => {
+    //   it("shouldn't update the player", async () => {
+    //     assert.throws(() => {
+    //       playerModel.update(testPlayer.id, {
+    //         favorite_food: "Pizza",
+    //       });
+    //     }, "Invalid field: favorite_food");
+    //   });
+    // });
+  });
+
+  // write a test for delete
+  describe("DB delete", () => {
+    it("should delete the player", async () => {
+      await playerModel.delete(testPlayer.id);
+      const player = await playerModel.getById(testPlayer.id);
+      expect(player).to.eq(undefined);
+    });
+  });
 });
