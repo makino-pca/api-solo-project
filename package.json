@@ -1,0 +1,20 @@
+{
+  "name": "api-solo-project",
+  "version": "1.0.0",
+  "description": "API Solo Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "chai": "^5.0.3",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.2.0"
+  }
+}
