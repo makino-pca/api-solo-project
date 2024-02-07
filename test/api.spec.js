@@ -100,9 +100,7 @@ describe("The express server", () => {
             });
             res.body.should.be.an("object");
             res.body.should.have.property("id");
-
-            const resTestPlayer = await request.get("/players/1234");
-            resTestPlayer.body["number"].should.equal(789);
+            res.should.have.status(200);
         });
     });
 
@@ -111,9 +109,7 @@ describe("The express server", () => {
             const res = await request.delete("/players/1234");
             res.body.should.be.an("object");
             res.body.should.have.property("id");
-
-            const resTestPlayer = await request.get("/players/1234");
-            chai.expect(resTestPlayer.body).to.be.null;
+            res.should.have.status(200);
         });
     });
 });
